@@ -21,3 +21,25 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+defaultTasks 'protogen'
+
+// TODO: Have this generate a library that cast-mesh-ui depends on rather
+//  than directly placing files in the project
+task protogen(type: Exec){
+    description = "Generates Java code for UI-side of protobuf implementation"
+
+    workingDir "../"
+
+    //These are relative to the parent directory
+    ext.sourceDir = "cast-mesh-core/src/main/proto"
+    ext.outputDir = "cast-mesh-ui/src/main/java"
+    // TODO: Change this to support multiple proto files
+    ext.protofile = "pingpong.proto"
+
+    commandLine 'protoc', "-I=${ext.sourceDir} --java_out=${ext.outputDir} ${ext.sourceDir}/${ext.protofile}"
+
+    doLast {
+        println "Generated files in: ${workingDir}/${ext.outputDir}"
+    }
+}
