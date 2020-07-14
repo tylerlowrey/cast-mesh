@@ -1,5 +1,5 @@
 import tornadofx.*;
-import views.MainView
+import com.tylerlowrey.views.MainView
 
 class Application : App(MainView::class)
 

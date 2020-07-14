@@ -19,6 +19,8 @@ repositories {
 
 dependencies {
 
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+
     // Grpc and Protobuf
     implementation "io.grpc:grpc-kotlin-stub:$grpc_kotlin_version"
     implementation "com.google.protobuf:protobuf-java:$protobuf_version"

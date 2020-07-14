@@ -1,4 +1,4 @@
-package views
+package com.tylerlowrey.views
 
 import MainController
 import tornadofx.*

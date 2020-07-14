@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package device.registration;
+
+option java_package="com.tylerlowrey.grpc.device.registration";
+option java_outer_classname="DeviceRegistrationProto";
+
+service RegistrationService {
+  rpc Send (RegistrationRequest) returns (RegistrationResult);
+}
+
+enum RegistrationStatusCode {
+  FAILED = 0;
+  SUCCESSFUL = 1;
+}
+
+message RegistrationRequest {
+  string deviceAddress = 1;
+}
+
+message RegistrationResult {
+  RegistrationStatusCode statusCode = 1;
+}
