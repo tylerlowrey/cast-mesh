@@ -1,32 +1,32 @@
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct Ping {
+pub struct RegistrationMessage {
     #[prost(string, tag = "1")]
-    pub message: std::string::String,
+    pub device_address: std::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct Pong {
-    #[prost(string, tag = "1")]
-    pub message: std::string::String,
+pub struct RegistrationResult {
+    #[prost(uint32, tag = "1")]
+    pub status_code: u32,
 }
 #[doc = r" Generated server implementations."]
-pub mod ping_pong_server {
+pub mod register_device_server {
     #![allow(unused_variables, dead_code, missing_docs)]
     use tonic::codegen::*;
-    #[doc = "Generated trait containing gRPC methods that should be implemented for use with PingPongServer."]
+    #[doc = "Generated trait containing gRPC methods that should be implemented for use with RegisterDeviceServer."]
     #[async_trait]
-    pub trait PingPong: Send + Sync + 'static {
+    pub trait RegisterDevice: Send + Sync + 'static {
         async fn send(
             &self,
-            request: tonic::Request<super::Ping>,
-        ) -> Result<tonic::Response<super::Pong>, tonic::Status>;
+            request: tonic::Request<super::RegistrationMessage>,
+        ) -> Result<tonic::Response<super::RegistrationResult>, tonic::Status>;
     }
     #[derive(Debug)]
     #[doc(hidden)]
-    pub struct PingPongServer<T: PingPong> {
+    pub struct RegisterDeviceServer<T: RegisterDevice> {
         inner: _Inner<T>,
     }
     struct _Inner<T>(Arc<T>, Option<tonic::Interceptor>);
-    impl<T: PingPong> PingPongServer<T> {
+    impl<T: RegisterDevice> RegisterDeviceServer<T> {
         pub fn new(inner: T) -> Self {
             let inner = Arc::new(inner);
             let inner = _Inner(inner, None);
@@ -38,9 +38,9 @@ pub mod ping_pong_server {
             Self { inner }
         }
     }
-    impl<T, B> Service<http::Request<B>> for PingPongServer<T>
+    impl<T, B> Service<http::Request<B>> for RegisterDeviceServer<T>
     where
-        T: PingPong,
+        T: RegisterDevice,
         B: HttpBody + Send + Sync + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
@@ -53,13 +53,16 @@ pub mod ping_pong_server {
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             let inner = self.inner.clone();
             match req.uri().path() {
-                "/pingpong.PingPong/Send" => {
+                "/registration.RegisterDevice/Send" => {
                     #[allow(non_camel_case_types)]
-                    struct SendSvc<T: PingPong>(pub Arc<T>);
-                    impl<T: PingPong> tonic::server::UnaryService<super::Ping> for SendSvc<T> {
-                        type Response = super::Pong;
+                    struct SendSvc<T: RegisterDevice>(pub Arc<T>);
+                    impl<T: RegisterDevice> tonic::server::UnaryService<super::RegistrationMessage> for SendSvc<T> {
+                        type Response = super::RegistrationResult;
                         type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
-                        fn call(&mut self, request: tonic::Request<super::Ping>) -> Self::Future {
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::RegistrationMessage>,
+                        ) -> Self::Future {
                             let inner = self.0.clone();
                             let fut = async move { inner.send(request).await };
                             Box::pin(fut)
@@ -91,13 +94,13 @@ pub mod ping_pong_server {
             }
         }
     }
-    impl<T: PingPong> Clone for PingPongServer<T> {
+    impl<T: RegisterDevice> Clone for RegisterDeviceServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
             Self { inner }
         }
     }
-    impl<T: PingPong> Clone for _Inner<T> {
+    impl<T: RegisterDevice> Clone for _Inner<T> {
         fn clone(&self) -> Self {
             Self(self.0.clone(), self.1.clone())
         }
@@ -107,7 +110,7 @@ pub mod ping_pong_server {
             write!(f, "{:?}", self.0)
         }
     }
-    impl<T: PingPong> tonic::transport::NamedService for PingPongServer<T> {
-        const NAME: &'static str = "pingpong.PingPong";
+    impl<T: RegisterDevice> tonic::transport::NamedService for RegisterDeviceServer<T> {
+        const NAME: &'static str = "registration.RegisterDevice";
     }
 }

@@ -4,8 +4,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build_client(false)
         .out_dir("src/")
         .compile(
-            &["../cast-mesh-core/proto/pingpong.proto"],
-            &["../cast-mesh-core/proto/"],
+            &["../cast-mesh-core/src/main/proto/registration.proto"],
+            &["../cast-mesh-core/src/main/proto/"],
         )?;
     Ok(())
 }
