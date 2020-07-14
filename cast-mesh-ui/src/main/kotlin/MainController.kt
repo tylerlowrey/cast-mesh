@@ -1,7 +1,14 @@
+import grpc.PingPongGrpcKt
 import tornadofx.*;
 
 class MainController : Controller() {
-    fun sendPing(msg: String) {
-        println("Ping sent.")
+
+    fun registerDevice(deviceAddress: String) {
+        runAsync {
+
+        } ui {
+            println("Ping sent.")
+        }
+
     }
 }

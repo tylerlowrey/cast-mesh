@@ -1,6 +1,15 @@
+buildscript {
+    ext.kotlin_version = "1.3.61"
+    ext.coroutines_version = "1.3.3"
+    ext.protobuf_version = "3.11.1"
+    ext.grpc_version = "1.28.1" // CURRENT_GRPC_VERSION
+    ext.grpc_kotlin_version = "0.1.4" // CURRENT_GRPC_KOTLIN_VERSION
+}
+
 plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version '1.3.72'
+    id "com.google.protobuf" version "0.8.12"
 }
 
 group 'com.tylerlowrey'
@@ -11,8 +20,25 @@ repositories {
 }
 
 dependencies {
+
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+
+
+    // Grpc and Protobuf
+    implementation "io.grpc:grpc-kotlin-stub:$grpc_kotlin_version"
+    implementation "com.google.protobuf:protobuf-java:$protobuf_version"
+    implementation "com.google.protobuf:protobuf-java-util:$protobuf_version"
+    implementation "io.grpc:grpc-netty-shaded:$grpc_version"
+    implementation "io.grpc:grpc-protobuf:$grpc_version"
+    implementation "io.grpc:grpc-stub:$grpc_version"
+
+    // Java
+    compileOnly "javax.annotation:javax.annotation-api:1.2"
+
 }
 
 compileKotlin {
@@ -22,8 +48,32 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 
-defaultTasks 'protogen'
+protobuf {
+    protoc { artifact = "com.google.protobuf:protoc:$protobuf_version" }
+    plugins {
+        // Specify protoc to generate using kotlin protobuf plugin
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:$grpc_version"
+        }
+        // Specify protoc to generate using our grpc kotlin plugin
+        grpckt {
+            artifact = "io.grpc:protoc-gen-grpc-kotlin:$grpc_kotlin_version"
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.plugins {
+                // Generate Java gRPC classes
+                grpc { }
+                // Generate Kotlin gRPC using the custom plugin from library
+                grpckt { }
+            }
+        }
+    }
+}
 
+//defaultTasks 'protogen'
+/*
 // TODO: Have this generate a library that cast-mesh-ui depends on rather
 //  than directly placing files in the project
 task protogen(type: Exec){
@@ -33,13 +83,16 @@ task protogen(type: Exec){
 
     //These are relative to the parent directory
     ext.sourceDir = "cast-mesh-core/src/main/proto"
-    ext.outputDir = "cast-mesh-ui/src/main/java"
+    ext.outputDir = "cast-mesh-ui/src/main/kotlin/grpc"
     // TODO: Change this to support multiple proto files
     ext.protofile = "pingpong.proto"
 
-    commandLine 'protoc', "-I=${ext.sourceDir} --java_out=${ext.outputDir} ${ext.sourceDir}/${ext.protofile}"
+    commandLine 'echo', 'hello'
+    //commandLine 'protoc', "--plugin=protoc-gen-grpc-kotlin=/usr/local/include/grpc-kotlin/protoc-gen-grpc-kotlin \
+     //                      --grpckt_out=${workingDir}/${ext.outputDir} --proto_path=${workingDir}/${ext.sourceDir} ${ext.protofile}"
 
-    doLast {
+    doLast{
         println "Generated files in: ${workingDir}/${ext.outputDir}"
     }
 }
+ */

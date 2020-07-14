@@ -9,7 +9,7 @@ class MainView : View() {
     override val root = vbox {
         button("Send") {
             action {
-                controller.sendPing("Ping!")
+                controller.registerDevice("192.168.1.131:44004")
             }
         }
         label("Send message to device")
