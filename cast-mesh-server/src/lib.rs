@@ -5,9 +5,13 @@
 
 pub mod cors;
 
+pub const SQLITE_DB_PATH: &str = "./data.db";
+
 pub mod routes {
     use rocket_contrib::json::{Json, JsonValue};
     use crate::types::DeviceInfo;
+    use rusqlite::Connection;
+    use crate::SQLITE_DB_PATH;
 
     #[get("/")]
     pub fn index() -> &'static str {
@@ -16,10 +20,13 @@ pub mod routes {
 
     #[post("/devices/register", format = "json", data = "<body>")]
     pub fn register_device(body: Json<DeviceInfo>) {
+        let conn = Connection::open(&SQLITE_DB_PATH).expect("Unable to connect to sqlite database");
 
         let request = body.into_inner();
         println!("Received registration request: [{}, {}, {}] ",
                  request.device_name, request.device_address, request.device_port);
+
+        conn.close().expect("Unable to close sqlite connection");
     }
 
     #[delete("/devices/<device_id>")]

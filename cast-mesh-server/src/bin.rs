@@ -6,11 +6,24 @@ use cast_mesh_server::routes;
 use rocket::Config;
 use rocket::config::Environment;
 use cast_mesh_server::cors::CORS;
+use rusqlite::Connection;
 
 const ROCKET_SERVER_PORT: u16 = 50050;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+
+    //Generate table for devices
+    let conn = Connection::open(cast_mesh_server::SQLITE_DB_PATH)?;
+
+    conn.execute(
+        r#"CREATE TABLE devices(
+            id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL,
+            address TEXT NOT NULL,
+            port INTEGER NOT NULL
+        )"#, params![]
+    ).expect("Unable to create devices table");
 
     let rocket_server_task = tokio::spawn(async {
         let config = Config::build(Environment::Development)
