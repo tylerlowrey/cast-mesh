@@ -1,0 +1,1 @@
+{"rustc":3698716579439262826,"features":"[]","target":1114463511556614207,"profile":6299028598154287785,"path":18473789722263702,"deps":[[18359848590446743031,"libc",false,6376592543247513401]],"local":[{"CheckDepInfo":{"dep_info":"debug/.fingerprint/inotify-sys-f3edf2801d7391fd/dep-lib-inotify-sys"}}],"rustflags":[],"metadata":7193815289792856449,"config":0}

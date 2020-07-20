@@ -1,0 +1,13 @@
+.App {
+    padding: 10px;
+}
+
+.app-top {
+    display: flex;
+    flex-direction: row;
+}
+
+.widget-container {
+    background: #FFF;
+    padding: 10px;
+}

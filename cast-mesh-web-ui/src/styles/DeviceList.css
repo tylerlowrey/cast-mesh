@@ -1,0 +1,32 @@
+.device-list-container {
+    padding: 5px 15px;
+}
+
+.device-list-widget-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.device-list-widget {
+    margin: 0 10px 0 0;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+}
+
+.device-list-widget .input-group {
+    margin-bottom: 5px;
+}
+
+.device-list-widget .input-group .input-group-prepend .input-group-text {
+    min-width: 150px;
+}
+
+.device-list-widget .input-group input {
+    text-align: right;
+}
+
+.device-list-button {
+    margin: 5px auto 0 auto;
+    width: 150px;
+}
