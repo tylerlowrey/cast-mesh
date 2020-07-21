@@ -1,25 +1,29 @@
 use crate::routes::types::ServerRegistration;
-use rocket_contrib::json::Json;
 use rocket::State;
-use std::sync::{Arc, Mutex};
+use rocket_contrib::json::Json;
 use std::net::SocketAddr;
+use std::sync::{Arc, Mutex};
 
 #[post("/register_server", format = "json", data = "<registration_json>")]
-pub fn register_server(registration_json: Json<ServerRegistration>,
-                   remote_addr: SocketAddr,
-                   server_addr: State<Arc<Mutex<String>>>)
-    -> Result<String, Box<dyn std::error::Error>> {
+pub fn register_server(
+    registration_json: Json<ServerRegistration>,
+    remote_addr: SocketAddr,
+    server_addr: State<Arc<Mutex<String>>>,
+) -> Result<String, Box<dyn std::error::Error>> {
     let registration_msg = registration_json.into_inner();
     let server_addr_string = format!("{}:{}", remote_addr.ip(), &registration_msg.server_port);
     if let Ok(mut server_addr) = server_addr.lock() {
         *server_addr = server_addr_string.clone();
     }
 
-    Ok(format!("Server {}:{} registered successfully", server_addr_string, registration_msg.server_port))
+    Ok(format!(
+        "Server {}:{} registered successfully",
+        server_addr_string, registration_msg.server_port
+    ))
 }
 
 pub mod types {
-    use serde::{Serialize, Deserialize};
+    use serde::{Deserialize, Serialize};
 
     #[derive(Serialize, Deserialize, Debug)]
     pub struct ServerRegistration {

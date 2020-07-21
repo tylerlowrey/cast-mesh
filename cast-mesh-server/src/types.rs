@@ -1,9 +1,8 @@
-use serde::{Serialize, Deserialize};
 use rusqlite::Connection;
+use serde::{Deserialize, Serialize};
 use std::sync::{Arc, Mutex};
 
 pub type DbConnection = Arc<Mutex<Connection>>;
-
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct DeviceRegistration {

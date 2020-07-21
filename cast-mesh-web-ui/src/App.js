@@ -24,10 +24,9 @@ function App()
     {
         return (
             <div className="App">
-                <button className="btn btn-secondary" onClick={() => setShowDeviceData(false)}>
-                    &lt; Go Back to Devices
-                </button>
-                <DeviceDataDisplay selectedDevice={selectedDevice}/>
+
+                <DeviceDataDisplay selectedDevice={selectedDevice}
+                    toggleDeviceDataFunc={setShowDeviceData}/>
             </div>
         )
     }
