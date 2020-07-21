@@ -1,3 +1,7 @@
+.device-registration-container {
+    align-self: flex-start;
+}
+
 .device-registration-header {
     font-weight: bold;
     font-size: 1.4em;

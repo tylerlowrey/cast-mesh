@@ -4,52 +4,91 @@
 #[macro_use] extern crate rocket_contrib;
 
 pub mod cors;
+pub mod types;
 
 pub const SQLITE_DB_PATH: &str = "./data.db";
+pub const ROCKET_SERVER_PORT: u16 = 50050;
 
 pub mod routes {
     use rocket_contrib::json::{Json, JsonValue};
-    use crate::types::DeviceInfo;
-    use rusqlite::Connection;
-    use crate::SQLITE_DB_PATH;
+    use crate::types::{DeviceRegistration, DbConnection, DeviceInfo};
+    use rusqlite::{Connection, params, NO_PARAMS};
+    use crate::{SQLITE_DB_PATH, ROCKET_SERVER_PORT};
+    use rocket::State;
+    use std::error::Error;
 
     #[get("/")]
     pub fn index() -> &'static str {
         "Hello, World!"
     }
 
-    #[post("/devices/register", format = "json", data = "<body>")]
-    pub fn register_device(body: Json<DeviceInfo>) {
-        let conn = Connection::open(&SQLITE_DB_PATH).expect("Unable to connect to sqlite database");
+    #[options("/devices")]
+    pub fn devices_options() {
 
-        let request = body.into_inner();
-        println!("Received registration request: [{}, {}, {}] ",
-                 request.device_name, request.device_address, request.device_port);
+    }
 
-        conn.close().expect("Unable to close sqlite connection");
+    #[options("/devices/<device_id>", format = "json")]
+    pub fn device_options(device_id: i32) {
+
+    }
+
+    #[post("/devices", format = "json", data = "<body>")]
+    pub fn register_device(body: Json<DeviceRegistration>, db: State<DbConnection>) {
+        if let Ok(conn) = db.lock() {
+            let request = body.into_inner();
+
+            let client = reqwest::blocking::Client::new();
+            let res = client.post(&format!("http://{}:{}/register_server", request.device_address, request.device_port))
+                .header("Content-Type", "application/json")
+                .body(format!("{{\"server_port\":{}}}", ROCKET_SERVER_PORT))
+                .send().unwrap();
+
+            if res.status().is_success() {
+                conn.execute("INSERT INTO devices(name, address, port) VALUES (?1, ?2, ?3)",
+                             params![request.device_name, request.device_address, request.device_port]);
+
+                println!("Received registration request: [{}, {}, {}] ",
+                         request.device_name, request.device_address, request.device_port);
+            }
+        }
     }
 
     #[delete("/devices/<device_id>")]
-    pub fn remove_device(device_id: i32) {
-        println!("Device with id {} removed", device_id);
+    pub fn remove_device(device_id: i32, db: State<DbConnection>) {
+        if let Ok(conn) = db.lock() {
+            let mut stmt = conn.prepare("DELETE FROM devices WHERE id = ?1")
+                .expect("Unable to create prepared statement for devices deletion");
+
+            stmt.execute(params![device_id])
+                .expect(&format!("Unable to delete device: {}", device_id));
+        }
     }
 
-    #[get("/devices")]
-    pub fn get_devices_list() -> Json<Vec<DeviceInfo>> {
-        let devices = vec![
-            DeviceInfo {
-                device_name: String::from("Smart Scale"),
-                device_address: String::from("127.0.0.1"),
-                device_port: 9000
-            },
-            DeviceInfo {
-                device_name: String::from("Smart Fridge"),
-                device_address: String::from("127.0.0.1"),
-                device_port: 9001
-            },
-        ];
 
-        Json(devices)
+    #[get("/devices")]
+    pub fn get_devices_list(db: State<DbConnection>) -> Json<Vec<DeviceInfo>> {
+        if let Ok(conn) = db.lock() {
+            let mut stmt = conn.prepare("SELECT id, name, address, port FROM devices")
+                               .expect("Unable to create prepared statement for devices list");
+            let devices_iter = stmt.query_map(NO_PARAMS, |row| {
+                Ok(DeviceInfo {
+                    device_id: row.get(0)?,
+                    device_name: row.get(1)?,
+                    device_address: row.get(2)?,
+                    device_port: row.get(3)?,
+                })
+            }).expect("Error while retrieving devices list");
+
+            let mut devices = Vec::new();
+
+            for device in devices_iter {
+                devices.push(device.unwrap());
+            }
+            Json(devices)
+        } else {
+            Json(Vec::new())
+        }
+
     }
 
     #[get("/devices/<device_id>")]
@@ -61,22 +100,6 @@ pub mod routes {
                 { "timestamp": 1102, "value": false }
             ]
         })
-    }
-}
-
-pub mod types {
-    use serde::{Serialize, Deserialize};
-
-    #[derive(Serialize, Deserialize, Debug)]
-    pub struct DeviceInfo {
-        pub device_name: String,
-        pub device_address: String,
-        pub device_port: u16,
-    }
-
-    pub struct RegistrationResponse {
-        response_code: i32,
-        response_message: String,
     }
 }
 

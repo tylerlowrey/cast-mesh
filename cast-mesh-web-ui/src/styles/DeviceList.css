@@ -5,10 +5,11 @@
 .device-list-widget-container {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
 }
 
 .device-list-widget {
-    margin: 0 10px 0 0;
+    margin: 0 10px 10px 0;
     min-width: 200px;
     display: flex;
     flex-direction: column;
@@ -19,7 +20,7 @@
 }
 
 .device-list-widget .input-group .input-group-prepend .input-group-text {
-    min-width: 150px;
+    min-width: 135px;
 }
 
 .device-list-widget .input-group input {

@@ -1,7 +1,16 @@
 import React from "react";
 import "../styles/DeviceList.css";
+import {SERVER_URL} from "../constants";
 
 const DeviceList = ({ devices, selectDeviceFunc }) => {
+
+    const removeDevice = (id) => {
+        fetch(`${SERVER_URL}/devices/${id}`, {
+            method: "DELETE",
+        });
+        window.location.reload();
+    }
+
     return(
         <div className="device-list-container">
             <h1>Devices</h1>
@@ -31,10 +40,12 @@ const DeviceList = ({ devices, selectDeviceFunc }) => {
                                 <input type="text" className="form-control" placeholder={device.device_port} aria-label="Device-Port"
                                        aria-describedby="basic-addon1" disabled />
                             </div>
-                            <button type="button" className="btn btn-danger device-list-button">
+                            <button type="button" className="btn btn-danger device-list-button"
+                                    onClick={() => removeDevice(device.device_id)}>
                                 Remove Device
                             </button>
-                            <button type="button" className="btn btn-primary device-list-button" onClick={ () => selectDeviceFunc(device)}>
+                            <button type="button" className="btn btn-primary device-list-button"
+                                    onClick={ () => selectDeviceFunc(device)}>
                                 View Data
                             </button>
                         </div>
