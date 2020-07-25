@@ -8,7 +8,7 @@ extern crate rocket_contrib;
 pub mod cors;
 pub mod types;
 
-pub const SQLITE_DB_PATH: &str = "./data.db";
+pub const SQLITE_DB_PATH: &str = "./target/release/data.db";
 pub const ROCKET_SERVER_PORT: u16 = 50050;
 pub const GRPC_SERVER_PORT: u16 = 50055;
 

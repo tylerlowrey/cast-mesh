@@ -15,7 +15,7 @@ extern crate rocket_contrib;
 fn main() {
 
     let conn = Connection::open(cast_mesh_ui_backend::SQLITE_DB_PATH)
-        .expect("Unable to connect to sqlite databse");
+        .expect("Unable to connect to sqlite database");
 
     conn.execute(
         r#"CREATE TABLE IF NOT EXISTS devices(
