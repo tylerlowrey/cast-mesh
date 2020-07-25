@@ -5,6 +5,8 @@ that allow custom implementations based upon the IoT device use-case.
 
 This project was created for my Systems Administration & Security class at Clemson University
 
+## Current Features
+- Basic UI that is built using a React webapp
+
 ## Planned Features
-- Provide a TornadoFX based UI that allows for adding an IoT Device that will send data to the collection server
-- Provide an easy to implement protobuf-based gRPC protocol for communication between the server and IoT devices
+- Remove dependency on a shared sqlite database between data collection server code and ui backend code
