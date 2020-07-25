@@ -36,7 +36,6 @@ pub mod routes {
         if let Ok(conn) = db.lock() {
             let request = body.into_inner();
 
-            /*
             let client = reqwest::blocking::Client::new();
             let res = client
                 .post(&format!(
@@ -48,22 +47,24 @@ pub mod routes {
                 .send()
                 .unwrap();
 
-
-             */
-
-            conn.execute(
-                "INSERT INTO devices(name, address, port) VALUES (?1, ?2, ?3)",
-                params![
-                    request.device_name,
-                    request.device_address,
-                    request.device_port
-                ],
-            );
-
             println!(
                 "Received registration request: [{}, {}, {}] ",
                 request.device_name, request.device_address, request.device_port
             );
+
+            if res.status().is_success {
+                conn.execute(
+                    "INSERT INTO devices(name, address, port) VALUES (?1, ?2, ?3)",
+                    params![
+                        request.device_name,
+                        request.device_address,
+                        request.device_port
+                    ],
+                );
+                println!("Successfully added new device.");
+            } else {
+                println!("Device refused registration request");
+            }
 
         }
     }
