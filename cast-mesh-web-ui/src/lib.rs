@@ -52,7 +52,7 @@ pub mod routes {
                 request.device_name, request.device_address, request.device_port
             );
 
-            if res.status().is_success {
+            if res.status().is_success() {
                 conn.execute(
                     "INSERT INTO devices(name, address, port) VALUES (?1, ?2, ?3)",
                     params![
@@ -111,7 +111,6 @@ pub mod routes {
 
     #[get("/devices/<device_id>")]
     pub fn get_device_data(device_id: i32, db: State<DbConnection>) -> Json<Vec<DeviceData>>{
-        /*
         if let Ok(conn) = db.lock() {
             let mut stmt = conn
                 .prepare("SELECT timestamp, data port FROM devices")
@@ -130,8 +129,6 @@ pub mod routes {
         } else {
             Json(Vec::new())
         }
-         */
-        Json(Vec::new())
     }
 }
 
