@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package counter;
+
+service CounterService {
+  rpc Send(CountMessage) returns (CountResponse);
+}
+
+enum ResponseCode {
+  ACK = 0;
+  REJECT = 1;
+}
+
+message CountMessage {
+  int64 timestamp = 1;
+  int64 count = 2;
+}
+
+message CountResponse {
+  ResponseCode response = 1;
+}
+
+
+

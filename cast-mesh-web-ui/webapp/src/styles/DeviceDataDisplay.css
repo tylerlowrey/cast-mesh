@@ -1,0 +1,10 @@
+.device-data-display-top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+table {
+    background: #FFF;
+}
