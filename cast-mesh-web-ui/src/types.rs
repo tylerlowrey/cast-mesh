@@ -24,6 +24,12 @@ pub struct ErrorMessage {
     pub error_msg: String,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct DeviceData {
+    pub timestamp: i64,
+    pub count: i64,
+}
+
 pub struct RegistrationResponse {
     response_code: i32,
     response_message: String,

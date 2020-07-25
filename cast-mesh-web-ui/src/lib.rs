@@ -13,7 +13,7 @@ pub const ROCKET_SERVER_PORT: u16 = 50050;
 pub const GRPC_SERVER_PORT: u16 = 50055;
 
 pub mod routes {
-    use crate::types::{DbConnection, DeviceInfo, DeviceRegistration};
+    use crate::types::{DbConnection, DeviceInfo, DeviceRegistration, DeviceData};
     use crate::{GRPC_SERVER_PORT, ROCKET_SERVER_PORT, SQLITE_DB_PATH};
     use rocket::State;
     use rocket_contrib::json::{Json, JsonValue};
@@ -36,6 +36,7 @@ pub mod routes {
         if let Ok(conn) = db.lock() {
             let request = body.into_inner();
 
+            /*
             let client = reqwest::blocking::Client::new();
             let res = client
                 .post(&format!(
@@ -47,21 +48,23 @@ pub mod routes {
                 .send()
                 .unwrap();
 
-            if res.status().is_success() {
-                conn.execute(
-                    "INSERT INTO devices(name, address, port) VALUES (?1, ?2, ?3)",
-                    params![
-                        request.device_name,
-                        request.device_address,
-                        request.device_port
-                    ],
-                );
 
-                println!(
-                    "Received registration request: [{}, {}, {}] ",
-                    request.device_name, request.device_address, request.device_port
-                );
-            }
+             */
+
+            conn.execute(
+                "INSERT INTO devices(name, address, port) VALUES (?1, ?2, ?3)",
+                params![
+                    request.device_name,
+                    request.device_address,
+                    request.device_port
+                ],
+            );
+
+            println!(
+                "Received registration request: [{}, {}, {}] ",
+                request.device_name, request.device_address, request.device_port
+            );
+
         }
     }
 
@@ -106,14 +109,28 @@ pub mod routes {
     }
 
     #[get("/devices/<device_id>")]
-    pub fn get_device_data(device_id: i32) -> JsonValue {
-        json!({
-            "data": [
-                { "timestamp": 1100, "value": true },
-                { "timestamp": 1101, "value": true },
-                { "timestamp": 1102, "value": false }
-            ]
-        })
+    pub fn get_device_data(device_id: i32, db: State<DbConnection>) -> Json<Vec<DeviceData>>{
+        /*
+        if let Ok(conn) = db.lock() {
+            let mut stmt = conn
+                .prepare("SELECT timestamp, data port FROM devices")
+                .expect("Unable to create prepared statement for devices list");
+            let data_iter = stmt.query_map(NO_PARAMS, |row| {
+                Ok(DeviceData{
+                    timestamp: row.get(0)?,
+                    count: row.get(1)?,
+                })
+            }).expect("Error while retrieving device data");
+            let mut data = Vec::new();
+            for data_point in data_iter {
+                data.push(data_point.unwrap());
+            }
+            Json(data)
+        } else {
+            Json(Vec::new())
+        }
+         */
+        Json(Vec::new())
     }
 }
 
